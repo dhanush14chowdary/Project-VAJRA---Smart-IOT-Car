@@ -1,1 +1,1 @@
-Paste your Cognito ID
+Paste your Cognito ID that also has Region
