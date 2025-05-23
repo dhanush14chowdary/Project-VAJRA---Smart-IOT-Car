@@ -3,15 +3,15 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-const char* ssid = "MrRobot";
-const char* password = "123456789";
-const char* mqttServer = "43.204.228.73";
+const char* ssid = "Your_SSID_Name";
+const char* password = "Password";
+const char* mqttServer = "Mqtt_server_address";
 const int mqttPort = 1883;
 const char* mqttControlTopic = "car/control"; // Topic to listen for control commands
 const char* mqttDataTopic = "car/data";       // Topic to publish sensor data
 
-const char* mqttUser = "admin";
-const char* mqttPassword = "nasal@airflow";
+const char* mqttUser = "MQTTUserName";
+const char* mqttPassword = "MQTTPassword";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
