@@ -26,7 +26,7 @@ SoftwareSerial BoltSerial(8, 12);
 #define OBSTACLE_DISTANCE 15
 
 // LDR threshold for lights
-#define DARK_THRESHOLD 300
+#define DARK_THRESHOLD 100
 
 // Driving mode speeds (PWM values)
 #define STRADA_SPEED 150
