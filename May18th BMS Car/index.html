@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoT RC Car Control</title>
-    <script src="https://cdn.jsdelivr.net/npm/@aws-amplify/auth@6.0.5/dist/aws-amplify-auth.min.js"></script>
+    <script src="source of AWS Cognito"></script>
     <style>
       body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
       .control-btn { margin: 10px; padding: 15px 30px; font-size: 18px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
@@ -38,10 +38,10 @@
         // Configure Amplify
         Amplify.configure({
           Auth: {
-            region: 'ap-northeast-1',
-            userPoolId: 'ap-northeast-1_dBgC00MUy',
-            userPoolWebClientId: '5dkvua34nr0aisdbspof6m8jib',
-            identityPoolId: 'ap-northeast-1:b8a6b98c-d386-47d1-858f-266f24147a3f'
+            region: 'your Region',
+            userPoolId: 'your userpoolID',
+            userPoolWebClientId: 'your userpoolclientID',
+            identityPoolId: 'your Identity pool ID'
           }
         });
       }
@@ -67,7 +67,7 @@
       }
 
       function connectWebSocket() {
-        socket = new WebSocket('wss://zq1dtrf1k7.execute-api.ap-northeast-1.amazonaws.com/prod');
+        socket = new WebSocket('Your Websocket server');
         socket.onopen = function() {
           console.log('WebSocket connected');
           document.getElementById('status').textContent = 'Connected';
