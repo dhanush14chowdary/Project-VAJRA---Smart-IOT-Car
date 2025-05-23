@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT RC Car Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/@aws-amplify/auth@6.0.5/dist/aws-amplify-auth.min.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
+      .control-btn { margin: 10px; padding: 15px 30px; font-size: 18px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+      .control-btn:hover { background: #0056b3; }
+      input { margin: 10px; padding: 10px; width: 200px; }
+      #authDiv, #controlDiv { max-width: 300px; margin: auto; }
+      #status { font-weight: bold; }
+    </style>
+  </head>
+  <body>
+    <h1>IoT RC Car Control</h1>
+    <div id="authDiv">
+      <input type="text" id="username" placeholder="Username"><br>
+      <input type="password" id="password" placeholder="Password"><br>
+      <button class="control-btn" onclick="signIn()">Sign In</button>
+    </div>
+    <div id="controlDiv" style="display:none;">
+      <div>Device Status: <span id="status">Disconnected</span></div>
+      <button class="control-btn" onclick="sendCommand('F')">Forward</button><br>
+      <button class="control-btn" onclick="sendCommand('L')">Left</button>
+      <button class="control-btn" onclick="sendCommand('R')">Right</button><br>
+      <button class="control-btn" onclick="sendCommand('B')">Backward</button><br>
+      <button class="control-btn" onclick="sendCommand('S')">Stop</button>
+    </div>
+
+    <script>
+      // Check if Amplify loaded
+      if (typeof Amplify === 'undefined') {
+        alert('AWS Amplify failed to load. Check network or script URL.');
+      } else {
+        // Configure Amplify
+        Amplify.configure({
+          Auth: {
+            region: 'ap-northeast-1',
+            userPoolId: 'ap-northeast-1_dBgC00MUy',
+            userPoolWebClientId: '5dkvua34nr0aisdbspof6m8jib',
+            identityPoolId: 'ap-northeast-1:b8a6b98c-d386-47d1-858f-266f24147a3f'
+          }
+        });
+      }
+
+      let socket;
+
+      async function signIn() {
+        if (typeof Amplify === 'undefined') {
+          alert('Cannot sign in: Amplify not loaded.');
+          return;
+        }
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const user = await Auth.signIn(username, password);
+          document.getElementById('authDiv').style.display = 'none';
+          document.getElementById('controlDiv').style.display = 'block';
+          connectWebSocket();
+        } catch (err) {
+          alert(err.message || JSON.stringify(err));
+        }
+      }
+
+      function connectWebSocket() {
+        socket = new WebSocket('wss://zq1dtrf1k7.execute-api.ap-northeast-1.amazonaws.com/prod');
+        socket.onopen = function() {
+          console.log('WebSocket connected');
+          document.getElementById('status').textContent = 'Connected';
+          document.getElementById('status').style.color = 'green';
+        };
+        socket.onmessage = function(event) {
+          console.log('Message from server:', event.data);
+          if (event.data === 'ALIVE') {
+            document.getElementById('status').textContent = 'Connected';
+            document.getElementById('status').style.color = 'green';
+          }
+        };
+        socket.onclose = function() {
+          console.log('WebSocket disconnected');
+          document.getElementById('status').textContent = 'Disconnected';
+          document.getElementById('status').style.color = 'red';
+        };
+      }
+
+      function sendCommand(command) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          socket.send(command);
+          console.log('Sent command:', command);
+        } else {
+          alert('WebSocket not connected. Simulating command.');
+          console.log('Simulated command:', command);
+        }
+      }
+    </script>
+  </body>
+  </html>
